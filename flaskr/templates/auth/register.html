@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block header %}
+   <h> {%block head%} Register {%endblock%}</h>
+{% endblock  %}
+
+{%block content%}
+    <form method="post">
+        <lable for="username">username</lable>
+        <input type="text" name="username" id="username" >
+        <lable for="password">password</lable>
+        <input type="password" name="password" id="password">
+        <input type="submit" value="Register">
+    </form>
+{%endblock%}
