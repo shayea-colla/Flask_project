@@ -18,10 +18,10 @@ from .db import get_db
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 
-@bp.route("/register", methods=["get", "post"])
+@bp.route("/register", methods=('GET', 'POST'))
 def register():
-    if request.method == "post":
-        ...
+    if request.method == "POST":
+        
         username = request.form["username"]
         password = request.form["password"]
         db = get_db()
@@ -35,8 +35,8 @@ def register():
         if error is None:
             try:
                 db.execute(
-                    "INSERT INTO USER (username, password) VALUES (?,?)",
-                    (username, generate_password_hash(password)),
+                    "INSERT INTO user (username, password) VALUES (?,?)",
+                    (username, generate_password_hash(password))
                 )
             except db.IntegrityError:
                 error = f"User {username} is already registerd."
@@ -49,25 +49,24 @@ def register():
         return render_template("auth/register.html")
 
 
-@bp.route('/login', methods=["get", "post"])
+@bp.route('/login', methods=("GET","POST"))
 def login():
-    if request.method == "post":
-        ...
+    if request.method == "POST":
+
         username = request.form["username"]
-        print(username)
         password = request.form["password"]
-        print(password)
         db = get_db()
         error = None
         
         user = db.execute(
-            "SELECT * from USER where username = ?", 
-            (username)
+             "SELECT * FROM user where username = (?)", 
+            (username,)
         ).fetchone()
+        
         if user == None:
-            error = "Invalide username"
+            error = "incorrect username"
         elif not check_password_hash(user['password'], password):
-            error = "Invalide password"
+            error = "incorrect password"
 
         if error is None:
             session.clear()
@@ -86,9 +85,9 @@ def load_logged_in_user():
         g.user = None
     else:
         g.user = get_db().execute(
-            "SELECT * FROM user WHERE id = ?"
-            (user_id,)
-        ).fetchone()
+            "SELECT * FROM user WHERE id = ?",
+                (user_id,)
+            ).fetchone()
         
 @bp.route("/logout")
 def logout():
