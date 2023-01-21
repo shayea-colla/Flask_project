@@ -15,10 +15,10 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from .db import get_db
 
-auth = Blueprint("auth", __name__, url_prefix="/auth")
+bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 
-@auth.route("/register", methods=["get", "post"])
+@bp.route("/register", methods=["get", "post"])
 def register():
     if request.method == "post":
         ...
@@ -49,12 +49,14 @@ def register():
         return render_template("auth/register.html")
 
 
-@auth.route('/login', methods=["get", "post"])
+@bp.route('/login', methods=["get", "post"])
 def login():
-    if request.methdo == "post":
+    if request.method == "post":
         ...
         username = request.form["username"]
+        print(username)
         password = request.form["password"]
+        print(password)
         db = get_db()
         error = None
         
@@ -76,7 +78,7 @@ def login():
         
     return render_template("auth/login.html")
 
-@auth.before_app_request
+@bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
     
@@ -88,7 +90,7 @@ def load_logged_in_user():
             (user_id,)
         ).fetchone()
         
-@auth.route("/logout")
+@bp.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for(index))
