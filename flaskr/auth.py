@@ -38,6 +38,7 @@ def register():
                     "INSERT INTO user (username, password) VALUES (?,?)",
                     (username, generate_password_hash(password))
                 )
+                db.commit()
             except db.IntegrityError:
                 error = f"User {username} is already registerd."
             else:
@@ -45,7 +46,6 @@ def register():
 
         flash(error)
 
-    else:
         return render_template("auth/register.html")
 
 
@@ -55,13 +55,14 @@ def login():
 
         username = request.form["username"]
         password = request.form["password"]
-        db = get_db()
+        d = get_db()
+        db = d.cursor()
         error = None
         
         user = db.execute(
-             "SELECT * FROM user where username = (?)", 
-            (username,)
-        ).fetchone()
+            "SELECT * FROM user WHERE username = ?",
+                (username,)
+            ).fetchone()
         
         if user == None:
             error = "incorrect username"

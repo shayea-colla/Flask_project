@@ -34,5 +34,7 @@ def create_app(test_config=None):
     from . import auth
     app.register_blueprint(auth.bp)
     
-    
+    from . import blog
+    app.register_blueprint(blog.bp)
+    app.add_rul_rule('/', endpoint="index")
     return app
